@@ -1,0 +1,21 @@
+server {
+    listen       1982;
+    server_name  localhost;
+
+    session_zone $binary_remote_addr zone=test:10M;
+
+    location / {
+        set $t1 yaoweibin;
+        set $t2 yaoweibin2;
+
+        session_store zone=test $t1 $t2;
+    }
+
+    location /get {
+        session_get zone=test $good $goal;
+
+        #any handler
+        proxy_pass http://www.163.com/$good$goal;
+    }
+}
+
