@@ -139,9 +139,12 @@ ngx_http_session_store_handler(ngx_http_request_t *r)
 
     sslcf = ngx_http_get_module_loc_conf(r, ngx_http_session_store_module);
 
-    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "session handler");
+    ngx_log_debug4(NGX_LOG_DEBUG_HTTP, r->connection->log,
+            0, "session handler: store_shm_zone=%p, store_index=%d, get_shm_zone=%p, get_index=%d",
+            sslcf->store_shm_zone, sslcf->store_index[0], 
+            sslcf->get_shm_zone, sslcf->get_index[0]);
 
-    if (sslcf->store_shm_zone && sslcf->store_index[0]) {
+    if (sslcf->store_shm_zone != NULL && sslcf->store_index[0] != NGX_CONF_UNSET_UINT) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "session store");
 
         rc = ngx_http_session_store_by_key(r);
@@ -150,15 +153,13 @@ ngx_http_session_store_handler(ngx_http_request_t *r)
         }
     }
 
-    if (sslcf->get_shm_zone == NULL || sslcf->get_index[0] == 0) {
-        return NGX_DECLINED;
-    }
+    if (sslcf->get_shm_zone != NULL && sslcf->get_index[0] != NGX_CONF_UNSET_UINT) {
+        ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "session get");
 
-    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "session get");
-
-    rc = ngx_http_session_get_by_key(r);
-    if (rc == NGX_ERROR) {
-        return NGX_ERROR;
+        rc = ngx_http_session_get_by_key(r);
+        if (rc == NGX_ERROR) {
+            return NGX_ERROR;
+        }
     }
 
     return NGX_DECLINED;
@@ -233,7 +234,7 @@ ngx_http_session_store_by_key(ngx_http_request_t *r)
     for (i = 0; i < 8; i++) {
         index = sslcf->store_index[i];
 
-        if (index == 0) {
+        if (index == NGX_CONF_UNSET_UINT) {
             break;
         }
 
@@ -275,7 +276,7 @@ ngx_http_session_store_by_key(ngx_http_request_t *r)
     for (i = 0; i < 8; i++) {
         index = sslcf->store_index[i];
 
-        if (index == 0) {
+        if (index == NGX_CONF_UNSET_UINT) {
             break;
         }
 
@@ -371,7 +372,7 @@ ngx_http_session_get_by_key(ngx_http_request_t *r)
     for (i = 0; i < 8; i++) {
         index = sslcf->get_index[i];
 
-        if (index == 0) {
+        if (index == NGX_CONF_UNSET_UINT) {
             break;
         }
 
@@ -907,6 +908,7 @@ ngx_http_session_store_init(ngx_conf_t *cf)
 static void *
 ngx_http_session_store_create_loc_conf(ngx_conf_t *cf)
 {
+    size_t                              i;
     ngx_http_session_store_loc_conf_t  *sslcf;
 
     sslcf = ngx_pcalloc(cf->pool, sizeof(ngx_http_session_store_loc_conf_t));
@@ -924,6 +926,14 @@ ngx_http_session_store_create_loc_conf(ngx_conf_t *cf)
      */
 
     sslcf->expire = NGX_CONF_UNSET;
+
+    for (i = 0; i < 8; i++) {
+        sslcf->store_index[i] = NGX_CONF_UNSET_UINT;
+    }
+
+    for (i = 0; i < 8; i++) {
+        sslcf->get_index[i] = NGX_CONF_UNSET_UINT;
+    }
 
     return sslcf;
 }
