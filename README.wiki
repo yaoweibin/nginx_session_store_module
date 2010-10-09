@@ -72,9 +72,9 @@ In this case, the session share memory zone is allocated 10MB as a zone called "
 
 '''context:''' ''location''
 
-'''description:''' Store the $variableN to the zone with the key of zone's session variable. The maximum number of variables is 8. Be careful, this directive executes before the 'set' and 'rewrite' directives.
+'''description:''' Store the $variable1 to $variableN to the zone with the key of zone's session variable. The maximum number of variables is 8. Be careful, this directive executes before the 'set' and 'rewrite' directives.
 
-The time of expire is the timeout of the session. Default value is 60 seconds. 
+The expire is the timeout of the session. After the expired time, the session will be deleted. Default value is 60 seconds. 
 
 == session_get ==
 
@@ -84,7 +84,7 @@ The time of expire is the timeout of the session. Default value is 60 seconds.
 
 '''context:''' ''location''
 
-'''description:''' Get the $variableN to the zone with the key of zone's session variable. The maximum number of variables is 8. Be careful, this directive executes before the 'set' and 'rewrite' directives.
+'''description:''' Get the $variable1 to $variableN from the zone with the key of zone's session variable. The maximum number of variables is 8. Be careful, this directive executes before the 'set' and 'rewrite' directives.
 
 = Installation =
 
