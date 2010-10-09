@@ -76,7 +76,7 @@ static char *ngx_http_session_get(ngx_conf_t *cf, ngx_command_t *cmd,
 static ngx_command_t  ngx_http_session_store_commands[] = {
 
     { ngx_string("session_zone"),
-      NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE2,
+      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE2,
       ngx_http_session_zone,
       NGX_HTTP_LOC_CONF_OFFSET,
       0,

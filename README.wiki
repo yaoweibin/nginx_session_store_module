@@ -56,7 +56,7 @@ Add the support of session with Nginx, the session's lifetime is long than the r
 
 '''default:''' ''none''
 
-'''context:''' ''http''
+'''context:''' ''http, server''
 
 '''description:''' The directive describes the area, which stores the information with the sessions. The values of the session is determined by the given variable. Example of usage:
 
